@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "680203792076",
+    "firebase_url": "https://bimkos-d7a96.firebaseio.com",
+    "project_id": "bimkos-d7a96",
+    "storage_bucket": "bimkos-d7a96.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:680203792076:android:940cb3d6a1378bdfb95c69",
+        "android_client_info": {
+          "package_name": "com.bimkos.smk_losarangg"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "680203792076-8hsnbjl3dtcpdrs233c4vpms15tddnnt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bimkos.smk_losarangg",
+            "certificate_hash": "9eaa27b5d7871252b866f4560bd7a6fd355fdb45"
+          }
+        },
+        {
+          "client_id": "680203792076-hbgm202dgehsmuelu74rv9e9p02dg47q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCcWU8w0x-2WhfbT9bRtrN9M-LreVA-bLg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "680203792076-hbgm202dgehsmuelu74rv9e9p02dg47q.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
