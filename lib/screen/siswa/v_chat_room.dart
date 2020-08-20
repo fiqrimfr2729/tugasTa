@@ -70,7 +70,7 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
 
   @override
   void initState() {
-    print("siswa " + widget.idUser);
+//    print("siswa " + widget.idUser);
     getSession();
 
     super.initState();
@@ -135,6 +135,7 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
                                   var status;
                                   Timestamp last_seen;
                                   snapshot.data.documents.forEach((element) {
+//                                    print("id User "+widget.idUser);
                                     if (element['id_user'] == widget.idUser) {
                                       status = element['status'];
                                       last_seen = element['last_seen'];

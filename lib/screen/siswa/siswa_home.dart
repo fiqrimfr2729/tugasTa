@@ -107,6 +107,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     Provider.of<ProviderUsers>(context, listen: false)
         .getGuruBK()
         .then((value) {
+          print(value);
       setState(() {
         nik = value.data[0].nik.toString();
         idUser = value.data[0].idUser.toString();
@@ -335,6 +336,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                                           listen: false)
                                                       .getListBimbingan();
                                                 });
+                                                print(idUser);
 
                                                 Navigator.push(
                                                     context,

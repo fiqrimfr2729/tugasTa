@@ -160,6 +160,8 @@ class ProviderUsers extends ChangeNotifier {
     SharedPreferences pref = await SharedPreferences.getInstance();
     var idSekolah = pref.get('id_sekolah');
     var tingkatan = pref.get('id_tingkatan');
+
+    print(idSekolah);
     dio = new Dio();
     print("sad");
     Response response;
@@ -168,6 +170,7 @@ class ProviderUsers extends ChangeNotifier {
     response = await dio.get(url, queryParameters: {"id_tingkatan": "$tingkatan"});
 
     if (response.statusCode == 200) {
+//      print(response.data);
       modelGuruBk = ModelGuruBk.fromJson(response.data);
     }
 
