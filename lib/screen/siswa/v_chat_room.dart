@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expandable/expandable.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,42 +10,32 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smk_losarangg/fullPhoto.dart';
-import 'package:smk_losarangg/models/m_guru_bp.dart';
-import 'package:smk_losarangg/models/m_list_chat.dart';
-import 'package:smk_losarangg/models/message_model.dart';
-import 'package:smk_losarangg/providers/p_bimbingan.dart';
-import 'dart:math' as math;
 import 'package:smk_losarangg/const.dart';
 import 'package:timeago/timeago.dart' as timeago;
-
 import 'package:smk_losarangg/providers/p_users.dart';
 
 class ViewChatRoom extends StatefulWidget {
   final String peerId;
-
   final String idBimbigan;
   final String isiBimbingan;
   final String to;
   final bool isSiswa;
   final idUser;
-
   ViewChatRoom(
       {Key key,
       @required this.peerId,
-      
       this.idBimbigan,
       this.isiBimbingan,
       this.isSiswa,
-      this.idUser, this.to})
+      this.idUser,
+      this.to})
       : super(key: key);
-
   @override
   _ViewChatRoomState createState() => _ViewChatRoomState();
 }
 
 class _ViewChatRoomState extends State<ViewChatRoom> {
   var nama;
-
   getSession() async {
     if (widget.isSiswa) {
       Provider.of<ProviderUsers>(context, listen: false)
@@ -70,9 +59,7 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
 
   @override
   void initState() {
-//    print("siswa " + widget.idUser);
     getSession();
-
     super.initState();
   }
 
@@ -88,7 +75,8 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
               children: <Widget>[
                 Flexible(
                   child: Padding(
-                    padding: const EdgeInsets.only(right: 10, bottom: 0, left: 10),
+                    padding:
+                        const EdgeInsets.only(right: 10, bottom: 0, left: 10),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100.0),
                       child: Image.asset(
@@ -112,7 +100,7 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             Text(
-                              nama==null ? "Pengguna BimKons" : "$nama",
+                              nama == null ? "Pengguna BimKons" : "$nama",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,
@@ -129,8 +117,9 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
                                 if (!snapshot.hasData) {
                                   return Center(
                                       child: CircularProgressIndicator(
-                                          valueColor: AlwaysStoppedAnimation<Color>(
-                                              themeColor)));
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  themeColor)));
                                 } else {
                                   var status;
                                   Timestamp last_seen;
@@ -146,17 +135,16 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
                                       ? Text(
                                           "${timeago.format(last_seen.toDate(), locale: 'id', allowFromNow: true)}",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 12),
+                                              color: Colors.white,
+                                              fontSize: 12),
                                         )
                                       : Text("$status",
                                           style: TextStyle(
-                                              color: Colors.white, fontSize: 12));
+                                              color: Colors.white,
+                                              fontSize: 12));
                                 }
                               },
                             ),
-//                        data.modelGuruBk.data[0].status.toString()=="offline" ?
-//                        Text("${timeago.format(data.modelGuruBk.data[0].updatedAt, locale: 'id', allowFromNow: true)}",style: TextStyle(color: Colors.white))
-//                            :Text("${data.modelGuruBk.data[0].status}",style: TextStyle(color: Colors.white)),
                           ],
                         )
                       ],
@@ -165,8 +153,6 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
                 )
               ],
             ),
-            
-         
           ],
         ),
         centerTitle: false,
@@ -174,25 +160,28 @@ class _ViewChatRoomState extends State<ViewChatRoom> {
       body: Stack(
         children: <Widget>[
           Positioned(
-            top: 10,
-            left: 15,
-            right: 15,
-            child: Center(child: Text("${widget.isiBimbingan}",style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),))),
-           Positioned(
-             top: 30,
-             left: 0,
-             right: 0,
-             bottom: 10,
-                        child: ChatScreen(
+              top: 10,
+              left: 15,
+              right: 15,
+              child: Center(
+                  child: Text(
+                "${widget.isiBimbingan}",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ))),
+          Positioned(
+            top: 30,
+            left: 0,
+            right: 0,
+            bottom: 10,
+            child: ChatScreen(
               peerId: widget.peerId,
               idBimbingan: widget.idBimbigan,
               isiBimbigan: widget.isiBimbingan,
-              
               isSiswa: widget.isSiswa,
               idUser: widget.idUser,
               to: widget.to,
+            ),
           ),
-           ),
         ],
       ),
     );
@@ -203,7 +192,6 @@ class ChatScreenState extends State<ChatScreen> {
   ChatScreenState(
       {Key key,
       @required this.peerId,
-     
       @required this.idBimbingan,
       @required this.to,
       @required this.isiBimbingan,
@@ -211,7 +199,7 @@ class ChatScreenState extends State<ChatScreen> {
       @required this.idUser});
 
   String peerId;
-  
+
   String id;
   String to;
   String idUser;
@@ -233,40 +221,20 @@ class ChatScreenState extends State<ChatScreen> {
   final ScrollController listScrollController = new ScrollController();
   final FocusNode focusNode = new FocusNode();
 
-//  var idUserAcount;
-//  getSession()async{
-//    print(widget.isSiswa);
-//    if(widget.isSiswa){
-//      Provider.of<ProviderUsers>(context,listen: false).getGuruBK().then((value) {
-//        setState(() {
-//          idUserAcount=value.data[0].idUser;
-//        });
-//      });
-//    }else{
-//      Provider.of<ProviderUsers>(context,listen: false).getStatusSiswa(idUser: widget.idUser).then((value) {
-//        print(value);
-//        setState(() {
-//          idUserAcount=value.data[0].idUser;
-//        });
-//      });
-//
-//    }
-//  }
-var nama;
- getSession() async {
-   SharedPreferences pref = await SharedPreferences.getInstance();
-   
+  var nama;
+  getSession() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+
     if (widget.isSiswa) {
       setState(() {
-     nama = pref.get("nama_siswa");
-   });
+        nama = pref.get("nama_siswa");
+      });
     } else {
       setState(() {
-     nama = pref.get("nama_guru");
-   });
+        nama = pref.get("nama_guru");
+      });
     }
   }
-
 
   @override
   void initState() {
@@ -295,21 +263,7 @@ var nama;
   readLocal() async {
     prefs = await SharedPreferences.getInstance();
     id = prefs.getString('nis') ?? '';
-
-    print(peerId);
-//    print("ini id "+id.hashCode.toString());
-//    print("ini peeID "+peerId.hashCode.toString());
     groupChatId = idBimbingan;
-//    if (id.hashCode <= peerId.hashCode) {
-//      print("true");
-//      groupChatId = '$id-$peerId';
-//    } else {
-//      print("false");
-//      groupChatId = '$peerId-$id';
-//    }
-
-//    Firestore.instance.collection('users').document(id).updateData({'chattingWith': peerId});
-
     setState(() {});
   }
 
@@ -351,17 +305,18 @@ var nama;
     });
   }
 
-  void onSendMessage(String content, int type) async{
-    // type: 0 = text, 1 = image, 2 = sticker
-   
+  void onSendMessage(String content, int type) async {
     if (content.trim() != '') {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var idUserAcount;
       setState(() {
-        idUserAcount=prefs.get('id_user');
+        idUserAcount = prefs.get('id_user');
       });
-      Firestore.instance.collection('users').document(idUserAcount).updateData(
-          {'id_user': idUserAcount, 'status': 'online', 'last_seen': DateTime.now(),});
+      Firestore.instance.collection('users').document(idUserAcount).updateData({
+        'id_user': idUserAcount,
+        'status': 'online',
+        'last_seen': DateTime.now(),
+      });
       textEditingController.clear();
 
       var documentReference = Firestore.instance
@@ -384,7 +339,8 @@ var nama;
       });
       listScrollController.animateTo(0.0,
           duration: Duration(milliseconds: 300), curve: Curves.easeOut);
-          Provider.of<ProviderUsers>(context, listen: false).sendNotif(to: to, title: nama, message: content);
+      Provider.of<ProviderUsers>(context, listen: false)
+          .sendNotif(to: to, title: nama, message: content);
     } else {
       Fluttertoast.showToast(msg: 'Nothing to send');
     }
@@ -487,9 +443,7 @@ var nama;
           children: <Widget>[
             Row(
               children: <Widget>[
-                isLastMessageLeft(index)
-                    ? Container()
-                    : Container(width: 35.0),
+                isLastMessageLeft(index) ? Container() : Container(width: 35.0),
                 document['type'] == 0
                     ? Container(
                         child: Text(
@@ -615,7 +569,7 @@ var nama;
     }
   }
 
-  Future<bool> onBackPress() async{
+  Future<bool> onBackPress() async {
     if (isShowSticker) {
       setState(() {
         isShowSticker = false;
@@ -625,10 +579,13 @@ var nama;
       SharedPreferences prefs = await SharedPreferences.getInstance();
       var idUserAcount;
       setState(() {
-        idUserAcount=prefs.get('id_user');
+        idUserAcount = prefs.get('id_user');
       });
-      Firestore.instance.collection('users').document(idUserAcount).updateData(
-          {'id_user': idUserAcount, 'status': 'online', 'last_seen': DateTime.now(),});
+      Firestore.instance.collection('users').document(idUserAcount).updateData({
+        'id_user': idUserAcount,
+        'status': 'online',
+        'last_seen': DateTime.now(),
+      });
       Navigator.pop(context);
     }
 
@@ -662,7 +619,6 @@ var nama;
   }
 
   Widget buildSticker() {
-    
     return Container(
       child: Column(
         children: <Widget>[
@@ -804,22 +760,10 @@ var nama;
             ),
             color: Colors.white,
           ),
-          // Material(
-          //   child: new Container(
-          //     margin: new EdgeInsets.symmetric(horizontal: 1.0),
-          //     child: new IconButton(
-          //       icon: new Icon(Icons.face),
-          //       onPressed: getSticker,
-          //       color: primaryColor,
-          //     ),
-          //   ),
-          //   color: Colors.white,
-          // ),
 
           // Edit text
           Flexible(
             child: Container(
-
               child: TextField(
                 onChanged: (v) async {
                   SharedPreferences prefs =
@@ -874,7 +818,7 @@ var nama;
                 maxLength: 1000,
                 maxLines: 10,
                 minLines: 1,
-                keyboardType:TextInputType.multiline,
+                keyboardType: TextInputType.multiline,
                 textInputAction: TextInputAction.newline,
                 decoration: InputDecoration.collapsed(
                   hintText: 'ketik pesan anda disini...',
@@ -884,7 +828,6 @@ var nama;
               ),
             ),
           ),
-
           // Button send message
           Material(
             child: new Container(
@@ -900,7 +843,7 @@ var nama;
         ],
       ),
       width: double.infinity,
-      height: textEditingController.text.length >50 ? 100 : 50,
+      height: textEditingController.text.length > 50 ? 100 : 50,
       decoration: new BoxDecoration(
           border:
               new Border(top: new BorderSide(color: greyColor2, width: 0.5)),
@@ -960,13 +903,13 @@ class ChatScreen extends StatefulWidget {
       this.idBimbingan,
       this.isiBimbigan,
       this.isSiswa,
-      this.idUser, this.to})
+      this.idUser,
+      this.to})
       : super(key: key);
 
   @override
   State createState() => new ChatScreenState(
         peerId: peerId,
-       
         isiBimbingan: isiBimbigan,
         idBimbingan: idBimbingan,
         isSiswa: isSiswa,
