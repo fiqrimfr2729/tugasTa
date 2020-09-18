@@ -9,7 +9,9 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smk_losarangg/providers/p_bimbingan.dart';
 import 'package:smk_losarangg/providers/p_users.dart';
+import 'package:smk_losarangg/screen/data_alumni.dart';
 import 'package:smk_losarangg/screen/pemberitahuan.dart';
+import 'package:smk_losarangg/screen/siswa/form_alumni.dart';
 import 'package:smk_losarangg/screen/siswa/siswa_absensi.dart';
 import 'package:smk_losarangg/screen/siswa/siswa_mulaibimbingan.dart';
 import 'package:smk_losarangg/screen/siswa/siswa_profil.dart';
@@ -531,6 +533,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () => Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Absensi()))),
+              SpeedDialChild(
+              child: Icon(
+                Icons.people,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.green[200],
+              label: 'Data Alumni',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => DataAlumni()))),
           SpeedDialChild(
               child: Icon(
                 Icons.info,

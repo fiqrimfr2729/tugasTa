@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smk_losarangg/providers/p_bimbingan.dart';
 import 'package:smk_losarangg/providers/p_users.dart';
+import 'package:smk_losarangg/screen/data_alumni.dart';
 import 'package:smk_losarangg/screen/guru/guru_absensi.dart';
 import 'package:smk_losarangg/screen/guru/guru_master.dart';
 import 'package:smk_losarangg/screen/guru/guru_profil.dart';
@@ -31,23 +32,23 @@ class PageHome extends StatefulWidget {
 class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
-      TextEditingController _controllerCari=TextEditingController();
-  
-  List<DataBimbinganGuru> listCari=[];
+  TextEditingController _controllerCari = TextEditingController();
+
+  List<DataBimbinganGuru> listCari = [];
 
   void _onRefresh() async {
     // monitor network fetch
     setState(() {
       listCari.clear();
     });
-   Provider.of<ProviderBimbingan>(context, listen: false).loadingbimbingan =
+    Provider.of<ProviderBimbingan>(context, listen: false).loadingbimbingan =
         true;
     Provider.of<ProviderBimbingan>(context, listen: false)
         .getListBimbinganGuru()
         .then((value) {
-           // if failed,use refreshFailed()
-    _refreshController.refreshCompleted();
-    bimbinganBaru=0;
+      // if failed,use refreshFailed()
+      _refreshController.refreshCompleted();
+      bimbinganBaru = 0;
       if (value.totalData != 0) {
         value.data.forEach((element) {
           if (element.statusByGuru.toString() == "0") {
@@ -58,7 +59,6 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
         });
       }
     });
-   
   }
 
   String _timeString;
@@ -368,11 +368,11 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                             width: 0.2,
                             height: 22,
                           ),
-                          Container(
-                            color: Colors.amber,
-                            width: 0.2,
-                            height: 22,
-                          ),
+                          // Container(
+                          //   color: Colors.amber,
+                          //   width: 0.2,
+                          //   height: 22,
+                          // ),
                           Consumer<ProviderBimbingan>(
                             builder: (context, data, _) {
                               if (data.loadingbimbingan) {
@@ -411,7 +411,36 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                                 }
                               }
                             },
-                          )
+                          ),
+                          Container(
+                            color: Colors.amber,
+                            width: 0.2,
+                            height: 22,
+                          ),
+                          InkWell(
+                            onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => DataAlumni())),
+                            child: Column(
+                              
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Text(
+                                  "${bimbinganBaru}",
+                                  style: TextStyle(
+                                    color: Color(0xFF527318),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 25,
+                                  ),
+                                ),
+                                Text(
+                                  'Total Alumni',
+                                  style: TextStyle(
+                                    color: Color(0xFF527318),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -419,18 +448,30 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                       height: 20,
                     ),
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
                       child: TextField(
                         controller: _controllerCari,
                         onChanged: (value) {
-                          
                           setState(() {
                             // var list=Provider.of<ProviderBimbingan>(context, listen: false).modelBimbinganGuru.data.where((element) => value.contains(element.isiBim)).toList();
                             // print(list.length);
                             listCari.clear();
                             // _controllerCari.text="";
-                            Provider.of<ProviderBimbingan>(context, listen: false).modelBimbinganGuru.data.forEach((element) {
-                              if(element.detailSiswa.namaSiswa.toLowerCase().contains(value) || element.detailSiswa.detailKelas.namaKelas.toLowerCase().contains(value) || element.isiBim.toLowerCase().contains(value)){
+                            Provider.of<ProviderBimbingan>(context,
+                                    listen: false)
+                                .modelBimbinganGuru
+                                .data
+                                .forEach((element) {
+                              if (element.detailSiswa.namaSiswa
+                                      .toLowerCase()
+                                      .contains(value) ||
+                                  element.detailSiswa.detailKelas.namaKelas
+                                      .toLowerCase()
+                                      .contains(value) ||
+                                  element.isiBim
+                                      .toLowerCase()
+                                      .contains(value)) {
                                 listCari.add(element);
                                 print(listCari.length);
                               }
@@ -441,7 +482,6 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           hintText: "Cari di disini ..",
-                    
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -464,470 +504,490 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                               child: Text("Data Kosong"),
                             );
                           } else {
-                            if(listCari.length==0 && _controllerCari.text.isEmpty) {
+                            if (listCari.length == 0 &&
+                                _controllerCari.text.isEmpty) {
                               return Container(
-                              height: 500,
-                              width: double.infinity,
-                              child: SmartRefresher(
-                               
-                                enablePullUp: true,
-                                header: WaterDropHeader(
-                                  waterDropColor: Colors.amber,
-                                ),
-                                controller: _refreshController,
-                                onRefresh: _onRefresh,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children:
-                                        data.modelBimbinganGuru.data.map((e) {
-                                      return Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 10, left: 15, right: 15),
-                                          child: Card(
-                                            elevation: 2,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Provider.of<ProviderBimbingan>(
-                                                        context,
-                                                        listen: false)
-                                                    .updateStatusBimbingan(
-                                                        context: context,
-                                                        isSiswa: false,
-                                                        idBimbingan: e.idBimbingan
-                                                            .toString())
-                                                    .then((res) {
+                                height: 500,
+                                width: double.infinity,
+                                child: SmartRefresher(
+                                  enablePullUp: true,
+                                  header: WaterDropHeader(
+                                    waterDropColor: Colors.amber,
+                                  ),
+                                  controller: _refreshController,
+                                  onRefresh: _onRefresh,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children:
+                                          data.modelBimbinganGuru.data.map((e) {
+                                        return Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: 10,
+                                                left: 15,
+                                                right: 15),
+                                            child: Card(
+                                              elevation: 2,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: InkWell(
+                                                onTap: () {
                                                   Provider.of<ProviderBimbingan>(
                                                           context,
                                                           listen: false)
-                                                      .getListBimbinganGuru()
-                                                      .then((value) {
-                                                    if (value.totalData != 0) {
-                                                      bimbinganBaru = 0;
-                                                      value.data
-                                                          .forEach((element) {
-                                                        if (element.statusByGuru
-                                                                .toString() ==
-                                                            "0") {
-                                                          setState(() {
-                                                            bimbinganBaru += 1;
-                                                          });
-                                                        }
-                                                      });
-                                                    }
+                                                      .updateStatusBimbingan(
+                                                          context: context,
+                                                          isSiswa: false,
+                                                          idBimbingan: e
+                                                              .idBimbingan
+                                                              .toString())
+                                                      .then((res) {
+                                                    Provider.of<ProviderBimbingan>(
+                                                            context,
+                                                            listen: false)
+                                                        .getListBimbinganGuru()
+                                                        .then((value) {
+                                                      if (value.totalData !=
+                                                          0) {
+                                                        bimbinganBaru = 0;
+                                                        value.data
+                                                            .forEach((element) {
+                                                          if (element
+                                                                  .statusByGuru
+                                                                  .toString() ==
+                                                              "0") {
+                                                            setState(() {
+                                                              bimbinganBaru +=
+                                                                  1;
+                                                            });
+                                                          }
+                                                        });
+                                                      }
+                                                    });
                                                   });
-                                                });
 
-                                                print(e.detailSiswa.idUser);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ViewChatRoom(
-                                                              idBimbigan: e
-                                                                  .idBimbingan
-                                                                  .toString(),
-                                                              isiBimbingan: e
-                                                                  .isiBim
-                                                                  .toLowerCase(),
-                                                              peerId: e
-                                                                  .detailSiswa.nis
-                                                                  .toString(),
-                                                              isSiswa: false,
-                                                              idUser: e
-                                                                  .detailSiswa
-                                                                  .idUser,
-                                                              to: e.detailSiswa
-                                                                  .idUser,
-                                                            )));
-                                              },
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 10,
-                                                            top: 10,
-                                                            left: 10),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100.0),
-                                                      child: Image.asset(
-                                                        'assets/user.jpg',
-                                                        height: 50,
-                                                        width: 50,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Flexible(
-                                                    child: Padding(
+                                                  print(e.detailSiswa.idUser);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewChatRoom(
+                                                                idBimbigan: e
+                                                                    .idBimbingan
+                                                                    .toString(),
+                                                                isiBimbingan: e
+                                                                    .isiBim
+                                                                    .toLowerCase(),
+                                                                peerId: e
+                                                                    .detailSiswa
+                                                                    .nis
+                                                                    .toString(),
+                                                                isSiswa: false,
+                                                                idUser: e
+                                                                    .detailSiswa
+                                                                    .idUser,
+                                                                to: e
+                                                                    .detailSiswa
+                                                                    .idUser,
+                                                              )));
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Padding(
                                                       padding:
                                                           const EdgeInsets.only(
+                                                              bottom: 10,
                                                               top: 10,
-                                                              bottom: 10),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: <Widget>[
-                                                              Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Text(
-                                                                      '${e.detailSiswa.namaSiswa}',
-                                                                      style: TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .bold,
-                                                                          fontSize:
-                                                                              18),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Container(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              10,
-                                                                          vertical:
-                                                                              3),
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .amber,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10)),
-                                                                      child: Text(
-                                                                        '${e.detailSiswa.detailKelas.namaKelas}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  ]),
-                                                              e.statusByGuru ==
-                                                                      "0"
-                                                                  ? Container(
-                                                                      margin: const EdgeInsets
-                                                                              .only(
-                                                                          right:
-                                                                              20),
-                                                                      padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                          horizontal:
-                                                                              15,
-                                                                          vertical:
-                                                                              5),
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .red,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(29)),
-                                                                      child: Text(
-                                                                        "Baru",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      ),
-                                                                    )
-                                                                  : Container()
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Text(
-                                                            "${timeago.format(e.createdAt, locale: 'id', allowFromNow: true)}",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontStyle:
-                                                                    FontStyle
-                                                                        .italic),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Text(
-                                                            "${e.isiBim}",
-                                                            style: TextStyle(
-                                                                fontSize: 16),
-                                                          ),
-                                                        ],
+                                                              left: 10),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    100.0),
+                                                        child: Image.asset(
+                                                          'assets/user.jpg',
+                                                          height: 50,
+                                                          width: 50,
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Flexible(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 10,
+                                                                bottom: 10),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <
+                                                                  Widget>[
+                                                                Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        '${e.detailSiswa.namaSiswa}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize: 18),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Container(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                10,
+                                                                            vertical:
+                                                                                3),
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.amber,
+                                                                            borderRadius: BorderRadius.circular(10)),
+                                                                        child:
+                                                                            Text(
+                                                                          '${e.detailSiswa.detailKelas.namaKelas}',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    ]),
+                                                                e.statusByGuru ==
+                                                                        "0"
+                                                                    ? Container(
+                                                                        margin: const EdgeInsets.only(
+                                                                            right:
+                                                                                20),
+                                                                        padding: const EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                15,
+                                                                            vertical:
+                                                                                5),
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.red,
+                                                                            borderRadius: BorderRadius.circular(29)),
+                                                                        child:
+                                                                            Text(
+                                                                          "Baru",
+                                                                          style:
+                                                                              TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      )
+                                                                    : Container()
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text(
+                                                              "${timeago.format(e.createdAt, locale: 'id', allowFromNow: true)}",
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text(
+                                                              "${e.isiBim}",
+                                                              style: TextStyle(
+                                                                  fontSize: 16),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ));
-                                    }).toList()),
-                              ),
-                            );
-                            } else if(listCari.length==0){
-                              return Center(child: Text("Data tidak ditemukan"),);
-                            } else{
-                              return Container(
-                              height: 500,
-                              width: double.infinity,
-                              child: SmartRefresher(
-                               
-                                enablePullUp: true,
-                                header: WaterDropHeader(
-                                  waterDropColor: Colors.amber,
+                                            ));
+                                      }).toList()),
                                 ),
-                                controller: _refreshController,
-                                onRefresh: _onRefresh,
-                                child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children:
-                                        listCari.map((e) {
-                                      return Padding(
-                                          padding: EdgeInsets.only(
-                                              bottom: 10, left: 15, right: 15),
-                                          child: Card(
-                                            elevation: 2,
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10)),
-                                            child: InkWell(
-                                              onTap: () {
-                                                Provider.of<ProviderBimbingan>(
-                                                        context,
-                                                        listen: false)
-                                                    .updateStatusBimbingan(
-                                                        context: context,
-                                                        isSiswa: false,
-                                                        idBimbingan: e.idBimbingan
-                                                            .toString())
-                                                    .then((res) {
+                              );
+                            } else if (listCari.length == 0) {
+                              return Center(
+                                child: Text("Data tidak ditemukan"),
+                              );
+                            } else {
+                              return Container(
+                                height: 500,
+                                width: double.infinity,
+                                child: SmartRefresher(
+                                  enablePullUp: true,
+                                  header: WaterDropHeader(
+                                    waterDropColor: Colors.amber,
+                                  ),
+                                  controller: _refreshController,
+                                  onRefresh: _onRefresh,
+                                  child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: listCari.map((e) {
+                                        return Padding(
+                                            padding: EdgeInsets.only(
+                                                bottom: 10,
+                                                left: 15,
+                                                right: 15),
+                                            child: Card(
+                                              elevation: 2,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
+                                              child: InkWell(
+                                                onTap: () {
                                                   Provider.of<ProviderBimbingan>(
                                                           context,
                                                           listen: false)
-                                                      .getListBimbinganGuru()
-                                                      .then((value) {
-                                                    if (value.totalData != 0) {
-                                                      bimbinganBaru = 0;
-                                                      value.data
-                                                          .forEach((element) {
-                                                        if (element.statusByGuru
-                                                                .toString() ==
-                                                            "0") {
-                                                          setState(() {
-                                                            bimbinganBaru += 1;
-                                                          });
-                                                        }
-                                                      });
-                                                    }
+                                                      .updateStatusBimbingan(
+                                                          context: context,
+                                                          isSiswa: false,
+                                                          idBimbingan: e
+                                                              .idBimbingan
+                                                              .toString())
+                                                      .then((res) {
+                                                    Provider.of<ProviderBimbingan>(
+                                                            context,
+                                                            listen: false)
+                                                        .getListBimbinganGuru()
+                                                        .then((value) {
+                                                      if (value.totalData !=
+                                                          0) {
+                                                        bimbinganBaru = 0;
+                                                        value.data
+                                                            .forEach((element) {
+                                                          if (element
+                                                                  .statusByGuru
+                                                                  .toString() ==
+                                                              "0") {
+                                                            setState(() {
+                                                              bimbinganBaru +=
+                                                                  1;
+                                                            });
+                                                          }
+                                                        });
+                                                      }
+                                                    });
                                                   });
-                                                });
 
-                                                print(e.detailSiswa.idUser);
-                                                Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            ViewChatRoom(
-                                                              idBimbigan: e
-                                                                  .idBimbingan
-                                                                  .toString(),
-                                                              isiBimbingan: e
-                                                                  .isiBim
-                                                                  .toLowerCase(),
-                                                              peerId: e
-                                                                  .detailSiswa.nis
-                                                                  .toString(),
-                                                              isSiswa: false,
-                                                              idUser: e
-                                                                  .detailSiswa
-                                                                  .idUser,
-                                                              to: e.detailSiswa
-                                                                  .idUser,
-                                                            )));
-                                              },
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.start,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            bottom: 10,
-                                                            top: 10,
-                                                            left: 10),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100.0),
-                                                      child: Image.asset(
-                                                        'assets/user.jpg',
-                                                        height: 50,
-                                                        width: 50,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  Flexible(
-                                                    child: Padding(
+                                                  print(e.detailSiswa.idUser);
+                                                  Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewChatRoom(
+                                                                idBimbigan: e
+                                                                    .idBimbingan
+                                                                    .toString(),
+                                                                isiBimbingan: e
+                                                                    .isiBim
+                                                                    .toLowerCase(),
+                                                                peerId: e
+                                                                    .detailSiswa
+                                                                    .nis
+                                                                    .toString(),
+                                                                isSiswa: false,
+                                                                idUser: e
+                                                                    .detailSiswa
+                                                                    .idUser,
+                                                                to: e
+                                                                    .detailSiswa
+                                                                    .idUser,
+                                                              )));
+                                                },
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.start,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Padding(
                                                       padding:
                                                           const EdgeInsets.only(
+                                                              bottom: 10,
                                                               top: 10,
-                                                              bottom: 10),
-                                                      child: Column(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: <Widget>[
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: <Widget>[
-                                                              Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .start,
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: <
-                                                                      Widget>[
-                                                                    Text(
-                                                                      '${e.detailSiswa.namaSiswa}',
-                                                                      style: TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .bold,
-                                                                          fontSize:
-                                                                              18),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: 10,
-                                                                    ),
-                                                                    Container(
-                                                                      padding: EdgeInsets.symmetric(
-                                                                          horizontal:
-                                                                              10,
-                                                                          vertical:
-                                                                              3),
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .amber,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(10)),
-                                                                      child: Text(
-                                                                        '${e.detailSiswa.detailKelas.namaKelas}',
-                                                                        style:
-                                                                            TextStyle(
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  ]),
-                                                              e.statusByGuru ==
-                                                                      "0"
-                                                                  ? Container(
-                                                                      margin: const EdgeInsets
-                                                                              .only(
-                                                                          right:
-                                                                              20),
-                                                                      padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                          horizontal:
-                                                                              15,
-                                                                          vertical:
-                                                                              5),
-                                                                      decoration: BoxDecoration(
-                                                                          color: Colors
-                                                                              .red,
-                                                                          borderRadius:
-                                                                              BorderRadius.circular(29)),
-                                                                      child: Text(
-                                                                        "Baru",
-                                                                        style: TextStyle(
-                                                                            color:
-                                                                                Colors.white),
-                                                                      ),
-                                                                    )
-                                                                  : Container()
-                                                            ],
-                                                          ),
-                                                          SizedBox(
-                                                            height: 5,
-                                                          ),
-                                                          Text(
-                                                            "${timeago.format(e.createdAt, locale: 'id', allowFromNow: true)}",
-                                                            style: TextStyle(
-                                                                fontSize: 14,
-                                                                color:
-                                                                    Colors.grey,
-                                                                fontStyle:
-                                                                    FontStyle
-                                                                        .italic),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                          ),
-                                                          Text(
-                                                            "${e.isiBim}",
-                                                            style: TextStyle(
-                                                                fontSize: 16),
-                                                          ),
-                                                        ],
+                                                              left: 10),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                    100.0),
+                                                        child: Image.asset(
+                                                          'assets/user.jpg',
+                                                          height: 50,
+                                                          width: 50,
+                                                          fit: BoxFit.cover,
+                                                        ),
                                                       ),
                                                     ),
-                                                  ),
-                                                ],
+                                                    SizedBox(
+                                                      width: 10,
+                                                    ),
+                                                    Flexible(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                    .only(
+                                                                top: 10,
+                                                                bottom: 10),
+                                                        child: Column(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .start,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: <Widget>[
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: <
+                                                                  Widget>[
+                                                                Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .start,
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: <
+                                                                        Widget>[
+                                                                      Text(
+                                                                        '${e.detailSiswa.namaSiswa}',
+                                                                        style: TextStyle(
+                                                                            fontWeight:
+                                                                                FontWeight.bold,
+                                                                            fontSize: 18),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        width:
+                                                                            10,
+                                                                      ),
+                                                                      Container(
+                                                                        padding: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                10,
+                                                                            vertical:
+                                                                                3),
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.amber,
+                                                                            borderRadius: BorderRadius.circular(10)),
+                                                                        child:
+                                                                            Text(
+                                                                          '${e.detailSiswa.detailKelas.namaKelas}',
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                12,
+                                                                          ),
+                                                                        ),
+                                                                      )
+                                                                    ]),
+                                                                e.statusByGuru ==
+                                                                        "0"
+                                                                    ? Container(
+                                                                        margin: const EdgeInsets.only(
+                                                                            right:
+                                                                                20),
+                                                                        padding: const EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                15,
+                                                                            vertical:
+                                                                                5),
+                                                                        decoration: BoxDecoration(
+                                                                            color:
+                                                                                Colors.red,
+                                                                            borderRadius: BorderRadius.circular(29)),
+                                                                        child:
+                                                                            Text(
+                                                                          "Baru",
+                                                                          style:
+                                                                              TextStyle(color: Colors.white),
+                                                                        ),
+                                                                      )
+                                                                    : Container()
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                              height: 5,
+                                                            ),
+                                                            Text(
+                                                              "${timeago.format(e.createdAt, locale: 'id', allowFromNow: true)}",
+                                                              style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                  fontStyle:
+                                                                      FontStyle
+                                                                          .italic),
+                                                            ),
+                                                            SizedBox(
+                                                              height: 10,
+                                                            ),
+                                                            Text(
+                                                              "${e.isiBim}",
+                                                              style: TextStyle(
+                                                                  fontSize: 16),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ));
-                                    }).toList()),
-                              ),
-                            );
+                                            ));
+                                      }).toList()),
+                                ),
+                              );
                             }
                           }
                         }

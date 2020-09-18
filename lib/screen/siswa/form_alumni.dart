@@ -1,0 +1,128 @@
+import 'dart:async';
+
+import 'package:dropdown_formfield/dropdown_formfield.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
+import 'package:rounded_loading_button/rounded_loading_button.dart';
+import 'package:smk_losarangg/providers/p_bimbingan.dart';
+import 'package:smk_losarangg/screen/chat_screen.dart';
+
+class FormAlumni extends StatefulWidget {
+  @override
+  _FormAlumniState createState() => _FormAlumniState();
+}
+
+class _FormAlumniState extends State<FormAlumni> {
+  String _myActivity;
+  List<String> listDropdown = ['Politeknik Negeri Indramayu', 'Institut Teknologi Bandung', 'Perguruan Tinggi Swasta', 'Lainnya'];
+  String dropdownValue;
+  final formKey = new GlobalKey<FormState>();
+  TextEditingController _controller=TextEditingController();
+  final RoundedLoadingButtonController _btnController =
+      new RoundedLoadingButtonController();
+
+  void _doSomething() async {
+    Timer(Duration(seconds: 3), () {
+      _btnController.success();
+
+
+    });
+  }
+
+  @override
+  void initState() {
+    initializeDateFormatting('id-ID');
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Form Alumi'),
+        backgroundColor: Colors.amber,
+      ),
+      body: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(), //buat scroll
+        child: Center(
+          child: Form(
+            key: formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Container(
+                  margin: const EdgeInsets.only(left: 25, right: 25, top: 20),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(color: Colors.amber)),
+                  padding: EdgeInsets.all(5),
+                  child: DropdownButtonHideUnderline(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: DropdownButton<String>(
+                        elevation: 3,
+                        value: dropdownValue,
+                        isExpanded: true,
+                        hint: Text('Pilih Universitas'),
+                        onChanged: (String newValue) {
+                          setState(() {
+                            dropdownValue = newValue;
+                          });
+                        },
+                        items: listDropdown
+                            .map<DropdownMenuItem<String>>((String value) {
+                          return DropdownMenuItem<String>(
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                ),
+                Padding(
+                    padding: const EdgeInsets.all(25),
+                    child: TextField(
+                      controller: _controller,
+                      cursorColor: Colors.amber,
+                      cursorWidth: 3.0,
+                      maxLines: 8,
+                      style: TextStyle(height: 2.0),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25)),
+                        labelText: 'Keterangan',
+                        hintText: 'Nama Perusahaan/Jurusan/Lainnya',
+                      ),
+                    )),
+                RoundedLoadingButton(
+                  color: Colors.amber,
+                  child: Text('Kirim', style: TextStyle(color: Colors.white)),
+                  controller: _btnController,
+                  onPressed: ()async{
+                    if(dropdownValue.isEmpty || _controller.text.isEmpty){
+                      Fluttertoast.showToast(msg: "Form tidak boleh ada yang kosong",textColor: Colors.white,
+                      toastLength: Toast.LENGTH_LONG,
+                        gravity: ToastGravity.TOP,
+                        backgroundColor: Colors.red,
+                      );
+                    }else{
+                      Provider.of<ProviderBimbingan>(context,listen: false).tambahBimbingan(
+                        context: context,
+                        isiBimbingan: _controller.text,
+                        subject: dropdownValue
+                      );
+                    }
+                  },
+                )
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
