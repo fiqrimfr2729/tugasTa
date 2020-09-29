@@ -9,6 +9,7 @@ import 'package:smk_losarangg/api-services/api.dart';
 import 'package:smk_losarangg/models/m_guru_bp.dart';
 import 'package:smk_losarangg/models/m_status_siswa.dart';
 import 'package:smk_losarangg/screen/guru/guru_home.dart';
+import 'package:smk_losarangg/screen/siswa/form_alumni.dart';
 import 'package:smk_losarangg/screen/siswa/siswa_home.dart';
 
 class ProviderUsers extends ChangeNotifier {
@@ -262,4 +263,26 @@ class ProviderUsers extends ChangeNotifier {
 
     return true;
   }
+
+
+  Future<bool> cekStatusSiswa({BuildContext context, String nis}) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var id_user = pref.get("id_user");
+    dio = new Dio();
+    print("sad");
+    Response response;
+    String url = "${ApiServer.cekStatusSiswa}";
+    response = await dio
+        .get(url, queryParameters: {
+          "nis" : "$nis"
+    });
+    if(response.statusCode==200){
+      if(response.data['code']==200){
+        Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> FormAlumni(nis: response.data['data']['nis'].toString(),)), (route) => false);
+      }
+    }
+
+    return true;
+  }
+
 }

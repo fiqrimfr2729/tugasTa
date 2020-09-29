@@ -60,6 +60,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     setState(() {
       idSekolah = pref.get("id_sekolah");
     });
+
+    Provider.of<ProviderUsers>(context,listen: false).cekStatusSiswa(context: context,nis: pref.get("nis"));
     print(idSekolah);
   }
 

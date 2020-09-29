@@ -383,31 +383,57 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                                   ),
                                 );
                               } else {
-                                if (data.modelBimbinganGuru.totalData == 0) {
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 60),
-                                    child: Text("Data Kosong"),
-                                  );
-                                } else {
-                                  return Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: <Widget>[
-                                      Text(
-                                        '${data.modelBimbinganGuru.totalData}',
-                                        style: TextStyle(
-                                          color: Color(0xFF527318),
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 25,
+                                if(data.modelBimbinganGuru==null)
+                                  {
+                                    return Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        Text(
+                                          '0',
+                                          style: TextStyle(
+                                            color: Color(0xFF527318),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 25,
+                                          ),
                                         ),
-                                      ),
-                                      Text(
-                                        'Total Bimbingan',
-                                        style: TextStyle(
-                                          color: Color(0xFF527318),
+                                        Text(
+                                          'Total Bimbingan',
+                                          style: TextStyle(
+                                            color: Color(0xFF527318),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }else {
+                                  print(data.modelBimbinganGuru);
+                                  if (data.modelBimbinganGuru.totalData == 0) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(top: 60),
+                                      child: Text("Data Kosong"),
+                                    );
+                                  } else {
+                                    return Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center,
+                                      children: <Widget>[
+                                        Text(
+                                          '${data.modelBimbinganGuru
+                                              .totalData}',
+                                          style: TextStyle(
+                                            color: Color(0xFF527318),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 25,
+                                          ),
                                         ),
-                                      )
-                                    ],
-                                  );
+                                        Text(
+                                          'Total Bimbingan',
+                                          style: TextStyle(
+                                            color: Color(0xFF527318),
+                                          ),
+                                        )
+                                      ],
+                                    );
+                                  }
                                 }
                               }
                             },
@@ -498,7 +524,7 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
                             ),
                           );
                         } else {
-                          if (data.modelBimbinganGuru.totalData == 0) {
+                          if (data.modelBimbinganGuru ==null) {
                             return Padding(
                               padding: const EdgeInsets.only(top: 60),
                               child: Text("Data Kosong"),
@@ -1046,6 +1072,16 @@ class _PageHomeState extends State<PageHome> with WidgetsBindingObserver {
               labelStyle: TextStyle(fontSize: 18.0),
               onTap: () => Navigator.push(context,
                   MaterialPageRoute(builder: (context) => DataMaster()))),
+          SpeedDialChild(
+              child: Icon(
+                Icons.people,
+                color: Colors.white,
+              ),
+              backgroundColor: Colors.green[200],
+              label: 'Data Alumni',
+              labelStyle: TextStyle(fontSize: 18.0),
+              onTap: () => Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => DataAlumni()))),
           // SpeedDialChild(
           //     child: Icon(
           //       Icons.history,

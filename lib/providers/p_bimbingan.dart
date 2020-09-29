@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:smk_losarangg/api-services/api.dart';
 import 'package:smk_losarangg/models/m_absen.dart';
+import 'package:smk_losarangg/models/m_alumni.dart';
 import 'package:smk_losarangg/models/m_data_absen.dart';
 import 'package:smk_losarangg/models/m_jurusan.dart';
 import 'package:smk_losarangg/models/m_kelas.dart';
@@ -22,8 +23,10 @@ import 'package:smk_losarangg/models/m_list_chat.dart';
 import 'package:smk_losarangg/models/m_list_pengumuman.dart';
 import 'package:smk_losarangg/models/m_rekapabsen.dart';
 import 'package:smk_losarangg/models/m_siswa.dart';
+import 'package:smk_losarangg/models/m_univ.dart';
 import 'package:smk_losarangg/providers/p_users.dart';
 import 'package:smk_losarangg/screen/chat_screen.dart';
+import 'package:smk_losarangg/screen/login.dart';
 import 'package:smk_losarangg/screen/pemberitahuan.dart';
 import 'package:smk_losarangg/screen/siswa/v_chat_room.dart';
 
@@ -516,5 +519,100 @@ class ProviderBimbingan extends ChangeNotifier {
     }
 
     return modelSiswa;
+  }
+
+
+  ModelUniv _modelUniv;
+
+  ModelUniv get modelUniv => _modelUniv;
+
+  set modelUniv(ModelUniv value) {
+    _modelUniv = value;
+    notifyListeners();
+  }
+
+
+  Future<ModelUniv> getUniv() async {
+    dio = new Dio();
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var idSekolah= pref.get("id_sekolah");
+    Response response;
+    var url=ApiServer.getUniv;
+    response = await dio.get(url);
+
+    if (response.statusCode == 200) {
+      modelUniv = ModelUniv.fromJson(response.data);
+    }
+
+    return modelUniv;
+  }
+
+
+  ModelAlumni _modelAlumni;
+
+
+  ModelAlumni get modelAlumni => _modelAlumni;
+
+  set modelAlumni(ModelAlumni value) {
+    _modelAlumni = value;
+    notifyListeners();
+  }
+
+  Future<ModelAlumni> getAlumni({String tahunLulus}) async {
+    dio = new Dio();
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var idSekolah= pref.get("id_sekolah");
+
+    Response response;
+    print(idSekolah);
+    print(tahunLulus);
+    var url=ApiServer.getAlumni;
+    response = await dio.get(url,queryParameters: {
+      "id_sekolah" : "$idSekolah",
+      "tahun_lulus" : "$tahunLulus"
+    });
+
+    if (response.statusCode == 200) {
+      modelAlumni = ModelAlumni.fromJson(response.data);
+    }
+
+    return modelAlumni;
+  }
+
+  Future<bool> saveAlumni(
+      {String nis,
+        String status,
+        String idUniv,
+        String keterangan,
+        String tahun_lulus,
+        BuildContext context,
+      }) async {
+    String url = "${ApiServer.saveAlumni}";
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    var idUser=pref.get('id_user');
+    var idSekolah=pref.get('id_sekolah');
+    ProgressDialog pg = new ProgressDialog(context, message: Text("Menyimpan"),dismissable: false);
+    pg.show();
+    dio = new Dio();
+    Response response;
+
+      response=await dio.post(url, data: {
+        "nis" : "$nis",
+        "status" : "$status",
+        "id_univ" : "$idUniv",
+        "keterangan" : "$keterangan",
+        "tahun_lulus" : "$tahun_lulus",
+      });
+    print(response.data);
+    if (response.statusCode == 200) {
+
+      pg.dismiss();
+      pref.remove("nis");
+      pref.remove("nik");
+//      Provider.of<ProviderBimbingan>(context, listen: false).getListPengumuman();
+      Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>LoginPage()), (route) => false);
+    }
+
+    return true;
   }
 }

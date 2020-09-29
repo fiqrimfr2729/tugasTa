@@ -25,5 +25,10 @@ class ApiServer{
   static final String getRekapAbsen="$baseUrl/get_rekap_absen";
   static final String getJurusan="$baseUrl/get_jurusan";
   static final String getSiswa="$baseUrl/get_siswa";
+  static final String getUniv="$baseUrl/get_univ";
+//  static final String getUniv="$baseUrl/get_univ";
+  static final String saveAlumni="$baseUrl/save_alumni";
+  static final String getAlumni="$baseUrl/get_alumni";
+  static final String cekStatusSiswa="$baseUrl/cek_status_siswa";
   static final String foto="http://bimkos.xyz/api/files";
 }
